@@ -2,10 +2,6 @@
 
 A mod that displays the current damage value of all Sovereign Blade cards on screen during combat. Only visible when playing as the Regent character.
 
-## Screenshot
-
-![Sovereign Blade Tracker in Action]()
-
 ## Features
 
 - Tracks **all** Sovereign Blade cards simultaneously (multiple cards supported)
@@ -16,7 +12,7 @@ A mod that displays the current damage value of all Sovereign Blade cards on scr
 
 ## Installation
 
-1. Download the latest release from the [releases page]()
+1. Download the latest release from the [releases page](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)
 2. Extract the zip file
 3. Copy `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, and `sovereign_blade_tracker_manifest.json` to your STS2 mods folder (usually `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`). If the mods folder doesn't exist, create it.
 4. Launch Slay the Spire 2
@@ -81,10 +77,6 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 전투 중 Sovereign Blade 카드의 현재 데미지 수치를 화면에 표시해주는 모드입니다. Regent 캐릭터로 플레이할 때만 표시됩니다.
 
-## 스크린샷
-
-![Sovereign Blade Tracker in Action]()
-
 ## 기능
 
 - **모든** 군주의 칼날 카드를 동시에 추적 (복수 카드 지원)
@@ -95,7 +87,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 ## 설치 방법
 
-1. [여기]()에서 최신 릴리스를 다운로드합니다.
+1. [여기](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)에서 최신 릴리스를 다운로드합니다.
 2. zip 파일을 압축 해제합니다.
 3. `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, `sovereign_blade_tracker_manifest.json` 파일을 STS2 mods 폴더에 복사합니다. (보통 `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`입니다. 폴더가 없으면 생성하세요.)
 4. Slay the Spire 2를 실행합니다.
