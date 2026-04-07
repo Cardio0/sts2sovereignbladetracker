@@ -4,7 +4,7 @@ A mod that displays the current damage value of all Sovereign Blade cards on scr
 
 ## Screenshot
 
-
+![demo](SovereignBladeTracker.gif)
 
 ## Features
 
@@ -94,7 +94,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 ## 스크린샷
 
-
+![demo](SovereignBladeTracker.gif)
 
 ## 기능
 
