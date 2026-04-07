@@ -4,7 +4,7 @@ A mod that displays the current damage value of Sovereign Blade on screen during
 
 ## Installation
 
-1. Download the latest release from the [releases page](https://github.com/Cardio0/sts2sovereignbladetracker/releases/)
+1. Download the latest release from the [releases page](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)
 2. Extract the zip file
 3. Copy `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, and `sovereign_blade_tracker_manifest.json` to your STS2 mods folder (usually `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`). If the mods folder doesn't exist, create it.
 4. Launch Slay the Spire 2
@@ -71,7 +71,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 ## 설치 방법
 
-1. [여기](https://github.com/Cardio0/sts2sovereignbladetracker/releases)에서 최신 릴리스를 다운로드합니다.
+1. [여기](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)에서 최신 릴리스를 다운로드합니다.
 2. zip 파일을 압축 해제합니다.
 3. `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, `sovereign_blade_tracker_manifest.json` 파일을 STS2 mods 폴더에 복사합니다. (보통 `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`입니다. 폴더가 없으면 생성하세요.)
 4. Slay the Spire 2를 실행합니다.
