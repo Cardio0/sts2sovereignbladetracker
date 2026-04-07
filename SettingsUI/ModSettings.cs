@@ -21,6 +21,12 @@ namespace sovereignbladetracker
 		[JsonPropertyName("rememberPosition")]
 		public bool RememberPosition { get; set; } = true;
 
+		[JsonPropertyName("counterOnBlade")]
+		public bool CounterOnBlade { get; set; } = true;
+
+		[JsonPropertyName("bladeFontSize")]
+		public int BladeFontSize { get; set; } = 50;
+
 		private static readonly string ConfigPath = Path.Combine(
 			System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
 			"SlaytheSpire2",

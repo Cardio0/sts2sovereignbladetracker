@@ -13,7 +13,8 @@ namespace sovereignbladetracker
 	[HarmonyPatch]
 	public static class SovereignBladeInjectionPatch
 	{
-		internal static SovereignBladePanel? _panel;
+		internal static SovereignBladePanel?    _panel;
+		internal static BladeCounterOverlay?    _overlay;
 		internal static Vector2? _savedCustomPos;
 		internal static bool _isReturningToMainMenu = false;
 
@@ -100,7 +101,16 @@ namespace sovereignbladetracker
 							// 소멸 카드: 회색으로 표시
 							parts.Add($"[color=#aaaaaa]{(int)v}[/color]");
 
-						return "[center]" + string.Join("/", parts) + "[/center]";
+						// 4개마다 줄바꿈
+						var display = new System.Text.StringBuilder("[center]");
+						for (int i = 0; i < parts.Count; i++)
+						{
+							if (i > 0 && i % 4 == 0) display.Append('\n');
+							else if (i > 0)            display.Append('/');
+							display.Append(parts[i]);
+						}
+						display.Append("[/center]");
+						return display.ToString();
 					}
 					catch { return null; }
 				};
@@ -109,6 +119,61 @@ namespace sovereignbladetracker
 
 				// AddChild 이후에 호출해야 _Ready()가 이미 실행된 상태에서 적용됨
 				_panel.SetDraggable(settings.Draggable);
+
+				// ── BladeCounterOverlay 주입 ─────────────────────────────────────
+				// SovereignBlade.GetVfxNode() 리플렉션으로 각 칼날의 spineNode 위치를 가져옴
+				_overlay = new BladeCounterOverlay();
+				_overlay.SetCounterEnabled(settings.CounterOnBlade);
+				_overlay.SetFontSize(settings.BladeFontSize);
+
+				var getVfxNodeMethod = typeof(SovereignBlade).GetMethod(
+					"GetVfxNode",
+					System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+				_overlay.GetBladeData = () =>
+				{
+					try
+					{
+						var result = new List<(Node2D? spine, int damage)>();
+						foreach (var pile in capturedPlayer.Piles)
+						{
+							if (pile?.Cards == null) continue;
+							var pileTypeName = pile.GetType()
+								.GetProperty("Type",
+									System.Reflection.BindingFlags.Public |
+									System.Reflection.BindingFlags.NonPublic |
+									System.Reflection.BindingFlags.Instance)
+								?.GetValue(pile)?.ToString() ?? "";
+							if (pileTypeName.Contains("Exhaust")) continue; // 소멸 카드는 제외
+
+							foreach (var card in pile.Cards)
+							{
+								if (card is not SovereignBlade sb) continue;
+
+								// GetVfxNode(player, card) 호출
+								var vfxNode = getVfxNodeMethod?
+									.Invoke(null, new object[] { capturedPlayer, card }) as Node2D;
+								if (vfxNode == null || !GodotObject.IsInstanceValid(vfxNode)) continue;
+
+								// _spineNode 필드로 실제 궤도 위치 취득
+								Node2D? spineNode = null;
+								var spineField = vfxNode.GetType().GetField(
+									"_spineNode",
+									System.Reflection.BindingFlags.NonPublic |
+									System.Reflection.BindingFlags.Instance);
+								spineNode = spineField?.GetValue(vfxNode) as Node2D;
+
+								// _spineNode 실패 시 vfxNode 자체를 폴백
+								result.Add((spineNode ?? vfxNode, (int)sb.DynamicVars.Damage.BaseValue));
+							}
+						}
+						return result;
+					}
+					catch { return null; }
+				};
+
+				__instance.AddChild(_overlay);
+				// ─────────────────────────────────────────────────────────────────
 			}
 			catch (System.Exception ex)
 			{
@@ -125,6 +190,11 @@ namespace sovereignbladetracker
 				{
 					_panel.SetDefaultPosition(new Vector2(settings.PanelX, settings.PanelY));
 					_panel.SetDraggable(settings.Draggable);
+				}
+				if (_overlay != null && GodotObject.IsInstanceValid(_overlay))
+				{
+					_overlay.SetCounterEnabled(settings.CounterOnBlade);
+					_overlay.SetFontSize(settings.BladeFontSize);
 				}
 			}
 			catch (System.Exception ex)
@@ -155,6 +225,11 @@ namespace sovereignbladetracker
 					GodotObject.IsInstanceValid(SovereignBladeInjectionPatch._panel))
 				{
 					SovereignBladeInjectionPatch._panel.Visible = false;
+				}
+				if (SovereignBladeInjectionPatch._overlay != null &&
+					GodotObject.IsInstanceValid(SovereignBladeInjectionPatch._overlay))
+				{
+					SovereignBladeInjectionPatch._overlay.Visible = false;
 				}
 			}
 			catch (System.Exception ex)

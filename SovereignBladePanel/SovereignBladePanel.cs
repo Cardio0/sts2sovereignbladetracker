@@ -94,8 +94,17 @@ namespace sovereignbladetracker
 			// ────────────────────────────────────────────────────────────
 			Position = _defaultPosition;
 
-			// _Ready() 마지막에 적용 — SetDraggable이 AddChild 전에 호출됐어도 올바르게 반영됨
-			MouseFilter = _draggable ? MouseFilterEnum.Stop : MouseFilterEnum.Pass;
+			// 패널과 모든 자식을 Ignore로 설정 — 게임 UI 클릭을 차단하지 않음
+			// 드래그는 _Input에서 수동 범위 체크로 처리
+			SetMouseIgnoreRecursive(this);
+		}
+
+		private static void SetMouseIgnoreRecursive(Node node)
+		{
+			if (node is Control control)
+				control.MouseFilter = MouseFilterEnum.Ignore;
+			foreach (Node child in node.GetChildren())
+				SetMouseIgnoreRecursive(child);
 		}
 
 		public void SetDefaultPosition(Vector2 pos)
@@ -116,13 +125,11 @@ namespace sovereignbladetracker
 		public void SetDraggable(bool draggable)
 		{
 			_draggable = draggable;
-			MouseFilter = draggable ? MouseFilterEnum.Stop : MouseFilterEnum.Pass;
 		}
 
-		public override void _GuiInput(InputEvent @event)
+		public override void _Input(InputEvent @event)
 		{
-			if (!_draggable)
-				return;
+			if (!_draggable || !Visible) return;
 
 			if (@event is InputEventMouseButton mb)
 			{
@@ -130,10 +137,13 @@ namespace sovereignbladetracker
 				{
 					if (mb.Pressed)
 					{
-						_isDragging = true;
-						_dragOffset = GetGlobalMousePosition() - GlobalPosition;
+						if (new Rect2(GlobalPosition, Size).HasPoint(mb.GlobalPosition))
+						{
+							_isDragging = true;
+							_dragOffset = mb.GlobalPosition - GlobalPosition;
+						}
 					}
-					else
+					else if (_isDragging)
 					{
 						_isDragging = false;
 						_customPosition = Position;
@@ -142,9 +152,12 @@ namespace sovereignbladetracker
 				}
 				else if (mb.ButtonIndex == MouseButton.Right && mb.Pressed)
 				{
-					_customPosition = null;
-					Position = _defaultPosition;
-					SovereignBladeInjectionPatch.ClearCustomPosition();
+					if (new Rect2(GlobalPosition, Size).HasPoint(mb.GlobalPosition))
+					{
+						_customPosition = null;
+						Position = _defaultPosition;
+						SovereignBladeInjectionPatch.ClearCustomPosition();
+					}
 				}
 			}
 			else if (@event is InputEventMouseMotion && _isDragging)
