@@ -2,6 +2,9 @@
 
 A mod that displays the current damage value of all Sovereign Blade cards on screen during combat. Only visible when playing as the Regent character.
 
+## Screenshot
+![Uploading image.png…]()
+
 ## Features
 
 - Tracks **all** Sovereign Blade cards simultaneously (multiple cards supported)
@@ -87,6 +90,10 @@ You can build this mod using dotnet or Godot 4.5.1.
 # Sovereign Blade Tracker (한국어)
 
 전투 중 Sovereign Blade 카드의 현재 데미지 수치를 화면에 표시해주는 모드입니다. Regent 캐릭터로 플레이할 때만 표시됩니다.
+
+## 스크린샷
+
+![Uploading image.png…]()
 
 ## 기능
 
