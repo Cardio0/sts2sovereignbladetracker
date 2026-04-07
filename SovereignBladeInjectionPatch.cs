@@ -1,5 +1,7 @@
 using HarmonyLib;
 using Godot;
+using System.Collections.Generic;
+using System.Linq;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -37,26 +39,71 @@ namespace sovereignbladetracker
 
 				_panel = new SovereignBladePanel();
 				_panel.SetDefaultPosition(pos);
-				_panel.CustomMinimumSize = new Vector2(400, 400);
-				_panel.Size = new Vector2(400, 400);
+				_panel.CustomMinimumSize = new Vector2(200, 200);
+				_panel.Size = new Vector2(200, 200);
 				_panel.Position = pos;
 
 				if (_savedCustomPos.HasValue)
 					_panel.SetCustomPosition(_savedCustomPos.Value);
 
-				// Initialize with current SovereignBlade damage
-				foreach (var pile in localPlayer.Piles)
+				// 매 프레임 전체 파일을 스캔해서 표시 문자열을 구성
+				// 활성(드로우/손패/버린카드): 내림차순 정렬 → "36/27/19"
+				// 소멸 zone: 괄호 처리 후 뒤에 붙임 → "(45)/36/27"
+				// 변화된 카드: SovereignBlade 인스턴스가 아니므로 자연스럽게 제외됨
+				var capturedPlayer = localPlayer;
+				// ExhaustPile 참조를 Player에서 직접 가져와 캐싱 (람다 외부에서 한 번만 실행)
+				_panel.GetDisplayText = () =>
 				{
-					if (pile?.Cards == null) continue;
-					foreach (var card in pile.Cards)
+					try
 					{
-						if (card is SovereignBlade sb)
+						var activeValues    = new List<decimal>();
+						var exhaustedValues = new List<decimal>();
+
+						foreach (var pile in capturedPlayer.Piles)
 						{
-							_panel.SetDamage(sb.DynamicVars.Damage.BaseValue);
-							break;
+							if (pile?.Cards == null) continue;
+
+							// CardPile.Type 프로퍼티로 소멸 파일 판별
+							var pileTypeName = pile.GetType()
+								.GetProperty("Type",
+									System.Reflection.BindingFlags.Public |
+									System.Reflection.BindingFlags.NonPublic |
+									System.Reflection.BindingFlags.Instance)
+								?.GetValue(pile)
+								?.ToString() ?? "";
+							bool isExhaust = pileTypeName.Contains("Exhaust");
+
+							foreach (var card in pile.Cards)
+							{
+								if (card is SovereignBlade sb)
+								{
+									if (isExhaust)
+										exhaustedValues.Add(sb.DynamicVars.Damage.BaseValue);
+									else
+										activeValues.Add(sb.DynamicVars.Damage.BaseValue);
+								}
+							}
 						}
+
+						// 카드가 하나도 없으면 (전부 변화됨) 기본값 표시
+						if (activeValues.Count == 0 && exhaustedValues.Count == 0)
+							return "[center]10[/center]";
+
+						// 내림차순 정렬
+						activeValues.Sort((a, b) => b.CompareTo(a));
+						exhaustedValues.Sort((a, b) => b.CompareTo(a));
+
+						var parts = new List<string>();
+						foreach (var v in activeValues)
+							parts.Add(((int)v).ToString());
+						foreach (var v in exhaustedValues)
+							// 소멸 카드: 회색으로 표시
+							parts.Add($"[color=#aaaaaa]{(int)v}[/color]");
+
+						return "[center]" + string.Join("/", parts) + "[/center]";
 					}
-				}
+					catch { return null; }
+				};
 
 				__instance.AddChild(_panel);
 
@@ -97,27 +144,7 @@ namespace sovereignbladetracker
 		}
 	}
 
-	[HarmonyPatch(typeof(SovereignBlade), nameof(SovereignBlade.AddDamage))]
-	public static class SovereignBladeAddDamagePatch
-	{
-		public static void Postfix(SovereignBlade __instance)
-		{
-			try
-			{
-				if (SovereignBladeInjectionPatch._panel != null &&
-					GodotObject.IsInstanceValid(SovereignBladeInjectionPatch._panel))
-				{
-					SovereignBladeInjectionPatch._panel.SetDamage(__instance.DynamicVars.Damage.BaseValue);
-				}
-			}
-			catch (System.Exception ex)
-			{
-				GD.PrintErr($"[SovereignBladeAddDamagePatch] Failed to update damage: {ex.Message}");
-			}
-		}
-	}
-
-	[HarmonyPatch(typeof(NCombatUi), "OnCombatWon")]
+[HarmonyPatch(typeof(NCombatUi), "OnCombatWon")]
 	public static class SovereignBladeCombatWonPatch
 	{
 		public static void Postfix()

@@ -6,7 +6,7 @@ namespace sovereignbladetracker
 	public partial class SovereignBladePanel : Control
 	{
 		private TextureRect? _backgroundRect;
-		private Label? _damageLabel;
+		private RichTextLabel? _damageLabel;
 		private Font? _font;
 
 		private bool _isDragging = false;
@@ -15,7 +15,23 @@ namespace sovereignbladetracker
 		private Vector2 _defaultPosition = new Vector2(80, 80);
 		private bool _draggable = true;
 
-		private decimal _currentDamage = 10m;
+		private string _lastDisplayText = "";
+
+		// 매 프레임 호출되는 표시 문자열 공급자 — 패치 쪽에서 설정
+		// 반환 형식: "36/27/19" (활성) / "(45)/36/19" (소멸 포함) / null (갱신 없음)
+		public Func<string?>? GetDisplayText;
+
+		public override void _Process(double delta)
+		{
+			if (GetDisplayText == null || !Visible) return;
+			var text = GetDisplayText();
+			if (text != null && text != _lastDisplayText)
+			{
+				_lastDisplayText = text;
+				if (_damageLabel != null)
+					_damageLabel.Text = text;  // BbcodeEnabled = true 이므로 BBCode 파싱됨
+			}
+		}
 
 		public override void _Ready()
 		{
@@ -39,51 +55,47 @@ namespace sovereignbladetracker
 
 			try
 			{
-				_font = ResourceLoader.Load<Font>("res://fonts/kreon_regular.ttf");
+				// 에너지 UI와 동일한 Kreon Bold 폰트 (게임 PCK에 포함)
+				_font = ResourceLoader.Load<Font>("res://themes/kreon_bold_shared.tres");
 			}
 			catch
 			{
 				_font = null;
 			}
 
-			_damageLabel = new Label
+			_damageLabel = new RichTextLabel
 			{
-				Text = "10",
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
+				BbcodeEnabled = true,
+				Text = "[center]10[/center]",
+				FitContent = true,
+				ScrollActive = false,
 				MouseFilter = MouseFilterEnum.Ignore
 			};
-			// 회색 원 위치: 이미지 기준 가로 중앙, 세로 ~75-80% 지점
-			// 400x400 패널 기준으로 원 중심 ≈ (200, 310), 반지름 ≈ 60px
-			// 수치 조정이 필요하면 Position과 Size를 변경
 			_damageLabel.AnchorLeft = 0f;
 			_damageLabel.AnchorTop = 0f;
 			_damageLabel.AnchorRight = 0f;
 			_damageLabel.AnchorBottom = 0f;
-			_damageLabel.Position = new Vector2(68, 188);
-			_damageLabel.Size = new Vector2(240, 120);
-			_damageLabel.AddThemeFontSizeOverride("font_size", 36);
+			// ── 라벨 위치/크기 조정 시 이 두 줄을 수정 ──────────────────────
+			_damageLabel.Position = new Vector2(10, 96);
+			_damageLabel.Size = new Vector2(180, 60);
+			// ────────────────────────────────────────────────────────────
+			_damageLabel.AddThemeFontSizeOverride("normal_font_size", 30);
 			if (_font != null)
-				_damageLabel.AddThemeFontOverride("font", _font);
-			_damageLabel.AddThemeColorOverride("font_color", new Color(0f, 0f, 0f));
-			_damageLabel.AddThemeColorOverride("font_shadow_color", new Color(1f, 1f, 1f, 0.8f));
-			_damageLabel.AddThemeConstantOverride("shadow_offset_x", 2);
-			_damageLabel.AddThemeConstantOverride("shadow_offset_y", 2);
+				_damageLabel.AddThemeFontOverride("normal_font", _font);
+			// 활성 카드: 흰 글자 / 소멸 카드: 회색(BBCode로 처리) / 파란 테두리
+			_damageLabel.AddThemeColorOverride("default_color", new Color(1f, 1f, 1f));
+			_damageLabel.AddThemeColorOverride("font_outline_color", new Color(0.05f, 0.15f, 0.8f, 1.0f));
+			_damageLabel.AddThemeConstantOverride("outline_size", 4);
 			AddChild(_damageLabel);
 
-			CustomMinimumSize = new Vector2(400, 400);
-			Size = new Vector2(400, 400);
+			// ── 패널 크기 조정 시 이 두 줄을 수정 ────────────────────────
+			CustomMinimumSize = new Vector2(200, 200);
+			Size = new Vector2(200, 200);
+			// ────────────────────────────────────────────────────────────
 			Position = _defaultPosition;
 
 			// _Ready() 마지막에 적용 — SetDraggable이 AddChild 전에 호출됐어도 올바르게 반영됨
 			MouseFilter = _draggable ? MouseFilterEnum.Stop : MouseFilterEnum.Pass;
-		}
-
-		public void SetDamage(decimal damage)
-		{
-			_currentDamage = damage;
-			if (_damageLabel != null)
-				_damageLabel.Text = ((int)damage).ToString();
 		}
 
 		public void SetDefaultPosition(Vector2 pos)

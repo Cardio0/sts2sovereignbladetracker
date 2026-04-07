@@ -10,10 +10,10 @@ namespace sovereignbladetracker
 	public class ModSettings
 	{
 		[JsonPropertyName("panelX")]
-		public int PanelX { get; set; } = 143;
+		public int PanelX { get; set; } = 177;
 
 		[JsonPropertyName("panelY")]
-		public int PanelY { get; set; } = 783;
+		public int PanelY { get; set; } = 845;
 
 		[JsonPropertyName("draggable")]
 		public bool Draggable { get; set; } = true;

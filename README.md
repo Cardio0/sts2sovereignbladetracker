@@ -1,10 +1,22 @@
 # Sovereign Blade Tracker
 
-A mod that displays the current damage value of Sovereign Blade on screen during combat. Only visible when playing as the Regent character.
+A mod that displays the current damage value of all Sovereign Blade cards on screen during combat. Only visible when playing as the Regent character.
+
+## Screenshot
+
+![Sovereign Blade Tracker in Action]()
+
+## Features
+
+- Tracks **all** Sovereign Blade cards simultaneously (multiple cards supported)
+- Displays values in **descending order**: `55/19/10`
+- Cards in the **exhaust zone** are shown in **gray**: `55/[gray]28[/gray]`
+- **Transformed** cards are automatically removed from the display
+- Real-time updates every frame — reflects changes from any game effect instantly
 
 ## Installation
 
-1. Download the latest release from the [releases page](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)
+1. Download the latest release from the [releases page]()
 2. Extract the zip file
 3. Copy `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, and `sovereign_blade_tracker_manifest.json` to your STS2 mods folder (usually `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`). If the mods folder doesn't exist, create it.
 4. Launch Slay the Spire 2
@@ -22,8 +34,8 @@ The config file will be created automatically on first run with default values.
 
 ```json
 {
-  "panelX": 143,
-  "panelY": 783,
+  "panelX": 177,
+  "panelY": 845,
   "draggable": true,
   "rememberPosition": true
 }
@@ -69,9 +81,21 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 전투 중 Sovereign Blade 카드의 현재 데미지 수치를 화면에 표시해주는 모드입니다. Regent 캐릭터로 플레이할 때만 표시됩니다.
 
+## 스크린샷
+
+![Sovereign Blade Tracker in Action]()
+
+## 기능
+
+- **모든** 군주의 칼날 카드를 동시에 추적 (복수 카드 지원)
+- 수치를 **내림차순**으로 표시: `55/19/10`
+- **소멸존**에 있는 카드는 **회색**으로 표시: `55/[회색]28[/회색]`
+- **변화**된 카드는 자동으로 표시에서 제거
+- 매 프레임 실시간 갱신 — 변화, 소멸 등 모든 게임 이펙트를 즉시 반영
+
 ## 설치 방법
 
-1. [여기](https://github.com/Cardio0/sts2sovereignbladetracker/releases/latest)에서 최신 릴리스를 다운로드합니다.
+1. [여기]()에서 최신 릴리스를 다운로드합니다.
 2. zip 파일을 압축 해제합니다.
 3. `SovereignBladeTracker.dll`, `SovereignBladeTracker.pck`, `sovereign_blade_tracker_manifest.json` 파일을 STS2 mods 폴더에 복사합니다. (보통 `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker\`입니다. 폴더가 없으면 생성하세요.)
 4. Slay the Spire 2를 실행합니다.
@@ -89,8 +113,8 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 ```json
 {
-  "panelX": 143,
-  "panelY": 783,
+  "panelX": 177,
+  "panelY": 845,
   "draggable": true,
   "rememberPosition": true
 }
