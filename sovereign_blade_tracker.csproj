@@ -1,0 +1,26 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>sovereignbladetracker</RootNamespace>
+    <AssemblyName>SovereignBladeTracker</AssemblyName>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+    <Reference Include="sts2">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CopyToModsFolder" AfterTargets="Build">
+    <PropertyGroup>
+      <ModsFolder>C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\mods\SovereignBladeTracker</ModsFolder>
+    </PropertyGroup>
+    <MakeDir Directories="$(ModsFolder)" />
+    <Copy SourceFiles="$(OutputPath)SovereignBladeTracker.dll" DestinationFolder="$(ModsFolder)" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="sovereign_blade_tracker_manifest.json" DestinationFolder="$(ModsFolder)" SkipUnchangedFiles="false" />
+  </Target>
+</Project>

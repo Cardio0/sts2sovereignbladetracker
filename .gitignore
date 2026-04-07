@@ -1,0 +1,19 @@
+# Godot 4+ specific ignores
+.godot/
+.claude/
+/android/
+
+# Godot UID / import metadata
+*.uid
+*.import
+
+# Godot export output
+*.pck
+
+# NuGet / Harmony DLL (restored via dotnet restore)
+0Harmony.dll
+
+# IDE
+.vscode/
+
+data_sts2mod test_windows_x86_64/*

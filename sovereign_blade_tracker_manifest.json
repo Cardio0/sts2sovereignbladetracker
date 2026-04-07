@@ -1,0 +1,10 @@
+{
+  "id": "SovereignBladeTracker",
+  "name": "Sovereign Blade Tracker",
+  "author": "Cardi0",
+  "description": "Displays the current damage value of Sovereign Blade on screen during combat. Only visible when playing as the Regent character.",
+  "version": "1.0.0",
+  "has_pck": true,
+  "has_dll": true,
+  "affects_gameplay": false
+}
