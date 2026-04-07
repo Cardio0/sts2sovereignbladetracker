@@ -3,7 +3,8 @@
 A mod that displays the current damage value of all Sovereign Blade cards on screen during combat. Only visible when playing as the Regent character.
 
 ## Screenshot
-![Uploading image.png…]()
+
+
 
 ## Features
 
@@ -93,7 +94,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 ## 스크린샷
 
-![Uploading image.png…]()
+
 
 ## 기능
 
