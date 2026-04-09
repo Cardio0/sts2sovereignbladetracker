@@ -9,9 +9,10 @@ namespace sovereignbladetracker
 		private SpinBox?     _panelXInput;
 		private SpinBox?     _panelYInput;
 		private SpinBox?     _bladeFontSizeInput;
+		private CheckButton? _showPanelCheck;
+		private CheckButton? _counterOnBladeCheck;
 		private CheckButton? _draggableCheck;
 		private CheckButton? _rememberCheck;
-		private CheckButton? _counterOnBladeCheck;
 
 		public override void _Ready()
 		{
@@ -26,20 +27,46 @@ namespace sovereignbladetracker
 
 			var settings = ModSettings.Load();
 
-			vbox.AddChild(MakeRow("Panel X",         out _panelXInput,        0,  3840, settings.PanelX));
-			vbox.AddChild(MakeRow("Panel Y",         out _panelYInput,        0,  2160, settings.PanelY));
-			vbox.AddChild(MakeRow("Blade Font Size", out _bladeFontSizeInput, 8,   200, settings.BladeFontSize));
+			// Panel X [spinbox] Panel Y [spinbox] 한 행
+			var posRow = new HBoxContainer();
+			posRow.AddThemeConstantOverride("separation", 8);
 
-			// 토글 3개 가로 배치
-			var toggleRow = new HBoxContainer();
-			toggleRow.AddThemeConstantOverride("separation", 16);
-			_draggableCheck      = new CheckButton { Text = "Draggable",          ButtonPressed = settings.Draggable };
-			_rememberCheck       = new CheckButton { Text = "Remember Position",  ButtonPressed = settings.RememberPosition };
-			_counterOnBladeCheck = new CheckButton { Text = "Counter on Blade",   ButtonPressed = settings.CounterOnBlade };
-			toggleRow.AddChild(_draggableCheck);
-			toggleRow.AddChild(_rememberCheck);
-			toggleRow.AddChild(_counterOnBladeCheck);
-			vbox.AddChild(toggleRow);
+			var labelX = new Label { Text = "Panel X", CustomMinimumSize = new Vector2(60, 0) };
+			labelX.AddThemeColorOverride("font_color", White);
+			_panelXInput = new SpinBox { MinValue = 0, MaxValue = 3840, Value = settings.PanelX, Step = 1 };
+			_panelXInput.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+			var labelY = new Label { Text = "Panel Y", CustomMinimumSize = new Vector2(60, 0) };
+			labelY.AddThemeColorOverride("font_color", White);
+			_panelYInput = new SpinBox { MinValue = 0, MaxValue = 2160, Value = settings.PanelY, Step = 1 };
+			_panelYInput.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+			posRow.AddChild(labelX);
+			posRow.AddChild(_panelXInput);
+			posRow.AddChild(labelY);
+			posRow.AddChild(_panelYInput);
+			vbox.AddChild(posRow);
+
+			// Blade Font Size 행
+			vbox.AddChild(MakeRow("Blade Font Size", out _bladeFontSizeInput, 8, 200, settings.BladeFontSize));
+
+			// 표시 관련 토글 행: [Show Panel] [Counter on Blade]
+			var displayRow = new HBoxContainer();
+			displayRow.AddThemeConstantOverride("separation", 16);
+			_showPanelCheck      = new CheckButton { Text = "Show Panel",       ButtonPressed = settings.ShowPanel };
+			_counterOnBladeCheck = new CheckButton { Text = "Counter on Blade", ButtonPressed = settings.CounterOnBlade };
+			displayRow.AddChild(_showPanelCheck);
+			displayRow.AddChild(_counterOnBladeCheck);
+			vbox.AddChild(displayRow);
+
+			// 패널 동작 관련 토글 행: [Draggable] [Remember Position]
+			var behaviorRow = new HBoxContainer();
+			behaviorRow.AddThemeConstantOverride("separation", 16);
+			_draggableCheck = new CheckButton { Text = "Draggable",         ButtonPressed = settings.Draggable };
+			_rememberCheck  = new CheckButton { Text = "Remember Position", ButtonPressed = settings.RememberPosition };
+			behaviorRow.AddChild(_draggableCheck);
+			behaviorRow.AddChild(_rememberCheck);
+			vbox.AddChild(behaviorRow);
 
 			var btnRow = new HBoxContainer();
 			btnRow.AddThemeConstantOverride("separation", 8);
@@ -55,6 +82,38 @@ namespace sovereignbladetracker
 			btnRow.AddChild(resetBtn);
 
 			vbox.AddChild(btnRow);
+
+			// SpinBox 하단 선 흰색으로 변경 (AddChild 이후 적용)
+			Callable.From(() =>
+			{
+				ApplySpinBoxStyle(_panelXInput);
+				ApplySpinBoxStyle(_panelYInput);
+				ApplySpinBoxStyle(_bladeFontSizeInput);
+			}).CallDeferred();
+		}
+
+		private static void ApplySpinBoxStyle(SpinBox? spinBox)
+		{
+			if (spinBox == null) return;
+			var lineEdit = spinBox.GetLineEdit();
+			if (lineEdit == null) return;
+
+			var style = new StyleBoxFlat
+			{
+				BgColor          = new Color(0f, 0f, 0f, 0f), // 투명 배경
+				BorderColor      = new Color(1f, 1f, 1f),      // 흰색 선
+				BorderWidthBottom = 1,
+				BorderWidthLeft   = 0,
+				BorderWidthRight  = 0,
+				BorderWidthTop    = 0,
+				ContentMarginLeft   = 4,
+				ContentMarginRight  = 4,
+				ContentMarginTop    = 2,
+				ContentMarginBottom = 2,
+			};
+			lineEdit.AddThemeStyleboxOverride("normal", style);
+			lineEdit.AddThemeStyleboxOverride("focus",  style);
+			lineEdit.AddThemeColorOverride("font_color", new Color(1f, 1f, 1f));
 		}
 
 		private static HBoxContainer MakeRow(string labelText, out SpinBox spinBox, int min, int max, int value)
@@ -72,23 +131,25 @@ namespace sovereignbladetracker
 		private void OnApply()
 		{
 			if (_panelXInput == null || _panelYInput == null || _bladeFontSizeInput == null ||
-				_draggableCheck == null || _rememberCheck == null || _counterOnBladeCheck == null)
+				_showPanelCheck == null || _counterOnBladeCheck == null ||
+				_draggableCheck == null || _rememberCheck == null)
 				return;
 
 			var settings = ModSettings.Load();
 			settings.PanelX           = (int)_panelXInput.Value;
 			settings.PanelY           = (int)_panelYInput.Value;
 			settings.BladeFontSize    = (int)_bladeFontSizeInput.Value;
+			settings.ShowPanel        = _showPanelCheck.ButtonPressed;
+			settings.CounterOnBlade   = _counterOnBladeCheck.ButtonPressed;
 			settings.Draggable        = _draggableCheck.ButtonPressed;
 			settings.RememberPosition = _rememberCheck.ButtonPressed;
-			settings.CounterOnBlade   = _counterOnBladeCheck.ButtonPressed;
 			settings.Save();
 			SovereignBladeInjectionPatch.ApplySettings(settings);
 		}
 
 		private void OnResetToDefaults()
 		{
-			var defaults = new ModSettings(); // 코드 기본값으로 초기화
+			var defaults = new ModSettings();
 			defaults.Save();
 			SovereignBladeInjectionPatch.ApplySettings(defaults);
 			Refresh(defaults);
@@ -99,15 +160,17 @@ namespace sovereignbladetracker
 		private void Refresh(ModSettings settings)
 		{
 			if (_panelXInput == null || _panelYInput == null || _bladeFontSizeInput == null ||
-				_draggableCheck == null || _rememberCheck == null || _counterOnBladeCheck == null)
+				_showPanelCheck == null || _counterOnBladeCheck == null ||
+				_draggableCheck == null || _rememberCheck == null)
 				return;
 
-			_panelXInput.Value             = settings.PanelX;
-			_panelYInput.Value             = settings.PanelY;
-			_bladeFontSizeInput.Value      = settings.BladeFontSize;
-			_draggableCheck.ButtonPressed  = settings.Draggable;
-			_rememberCheck.ButtonPressed   = settings.RememberPosition;
+			_panelXInput.Value                 = settings.PanelX;
+			_panelYInput.Value                 = settings.PanelY;
+			_bladeFontSizeInput.Value          = settings.BladeFontSize;
+			_showPanelCheck.ButtonPressed      = settings.ShowPanel;
 			_counterOnBladeCheck.ButtonPressed = settings.CounterOnBlade;
+			_draggableCheck.ButtonPressed      = settings.Draggable;
+			_rememberCheck.ButtonPressed       = settings.RememberPosition;
 		}
 	}
 }

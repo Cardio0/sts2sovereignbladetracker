@@ -118,6 +118,7 @@ namespace sovereignbladetracker
 				__instance.AddChild(_panel);
 
 				// AddChild 이후에 호출해야 _Ready()가 이미 실행된 상태에서 적용됨
+				_panel.Visible = settings.ShowPanel;
 				_panel.SetDraggable(settings.Draggable);
 
 				// ── BladeCounterOverlay 주입 ─────────────────────────────────────
@@ -188,6 +189,7 @@ namespace sovereignbladetracker
 			{
 				if (_panel != null && GodotObject.IsInstanceValid(_panel))
 				{
+					_panel.Visible = settings.ShowPanel;
 					_panel.SetDefaultPosition(new Vector2(settings.PanelX, settings.PanelY));
 					_panel.SetDraggable(settings.Draggable);
 				}

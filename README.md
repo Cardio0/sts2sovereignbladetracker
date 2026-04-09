@@ -2,6 +2,10 @@
 
 A mod that displays the current damage value of all Sovereign Blade cards on screen during combat. Only visible when playing as the Regent character.
 
+## Screenshot
+
+![Action](SovereignBladeTracker.webp)
+
 ## Features
 
 - Tracks **all** Sovereign Blade cards simultaneously (multiple cards supported)
@@ -11,6 +15,10 @@ A mod that displays the current damage value of all Sovereign Blade cards on scr
 - **Transformed** cards are automatically removed from the display
 - Real-time updates every frame — reflects changes from any game effect instantly
 - **Counter on Blade** — displays the damage value directly on each orbiting blade
+
+## New in v1.3.0
+
+- **Show Panel** toggle — hide or show the tracker panel without removing it from the settings
 
 ## Bug Fixes (v1.2.0)
 
@@ -39,6 +47,7 @@ The config file will be created automatically on first run with default values.
 {
   "panelX": 177,
   "panelY": 845,
+  "showPanel": true,
   "draggable": true,
   "rememberPosition": true,
   "counterOnBlade": true,
@@ -49,6 +58,7 @@ The config file will be created automatically on first run with default values.
 ### Settings Explanation
 
 - **panelX / panelY**: Position of the tracker panel on screen
+- **showPanel**: Show or hide the tracker panel during combat
 - **draggable**: Whether the panel can be dragged with the mouse during combat
 - **rememberPosition**: Save the panel position when exiting the game
 - **counterOnBlade**: Show the damage value on each orbiting blade
@@ -88,6 +98,10 @@ You can build this mod using dotnet or Godot 4.5.1.
 
 전투 중 Sovereign Blade 카드의 현재 데미지 수치를 화면에 표시해주는 모드입니다. Regent 캐릭터로 플레이할 때만 표시됩니다.
 
+## 스크린샷
+
+![Action](SovereignBladeTracker.webp)
+
 ## 기능
 
 - **모든** 군주의 칼날 카드를 동시에 추적 (복수 카드 지원)
@@ -97,6 +111,10 @@ You can build this mod using dotnet or Godot 4.5.1.
 - **변화**된 카드는 자동으로 표시에서 제거
 - 매 프레임 실시간 갱신 — 변화, 소멸 등 모든 게임 이펙트를 즉시 반영
 - **칼날 카운터** — 공전하는 각 칼날 위에 해당 칼날의 데미지 수치를 직접 표시
+
+## 신규 기능 (v1.3.0)
+
+- **Show Panel** 토글 — 모드 설정에서 트래커 패널을 숨기거나 표시할 수 있음
 
 ## 버그 픽스 (v1.2.0)
 
@@ -125,6 +143,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 {
   "panelX": 177,
   "panelY": 845,
+  "showPanel": true,
   "draggable": true,
   "rememberPosition": true,
   "counterOnBlade": true,
@@ -135,6 +154,7 @@ You can build this mod using dotnet or Godot 4.5.1.
 ### 설정 설명
 
 - **panelX / panelY**: 트래커 패널의 화면 위치
+- **showPanel**: 전투 중 트래커 패널 표시 여부
 - **draggable**: 전투 중 마우스로 패널을 드래그할 수 있는지 여부
 - **rememberPosition**: 게임 종료 시 패널 위치를 저장할지 여부
 - **counterOnBlade**: 공전하는 각 칼날 위에 데미지 수치 표시 여부

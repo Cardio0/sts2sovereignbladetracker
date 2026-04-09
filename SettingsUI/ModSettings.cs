@@ -21,6 +21,9 @@ namespace sovereignbladetracker
 		[JsonPropertyName("rememberPosition")]
 		public bool RememberPosition { get; set; } = true;
 
+		[JsonPropertyName("showPanel")]
+		public bool ShowPanel { get; set; } = true;
+
 		[JsonPropertyName("counterOnBlade")]
 		public bool CounterOnBlade { get; set; } = true;
 
